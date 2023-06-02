@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "Auto UJI login by Teo2Peer",
-    "description": "Esta extensión te permite iniciar sesión automáticamente en el Aula Virtual de la UJI.",
+    "name": "AutoUJI by Teo2Peer",
+    "description": "Inicio de sesión automático en el Aula Virtual de la UJI.",
     "version": "1.0",
     "permissions": [
         "cookies",
