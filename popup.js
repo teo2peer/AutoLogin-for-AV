@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     chrome.storage.local.get("extensionEnabled", function (data) {
         toggleSwitch.checked = data.extensionEnabled;
+        console.log(data.extensionEnabled);
         buttonMessage.textContent = (data.extensionEnabled) ? "Activado" : "Desactivado";
 
         if (!data.extensionEnabled) {
@@ -32,9 +33,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-    chrome.runtime.sendMessage({ action: "getCopiedCookie" }, function (response) {
-        if (response.cookie) {
-            cookieText.textContent = response.cookie;
-        }
-    });
+
 });

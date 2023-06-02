@@ -1,31 +1,32 @@
 {
-    "manifest_version": 2,
+    "manifest_version": 3,
     "name": "Auto UJI login by Teo2Peer",
     "version": "1.0",
     "permissions": [
         "cookies",
-        "https://aulavirtual.uji.es/",
-        "https://www.uji.es/",
         "storage"
     ],
+    "host_permissions": [
+        "https://aulavirtual.uji.es/",
+        "https://www.uji.es/"
+    ],
+    "optional_host_permissions": [
+        "*://*/*"
+    ],
     "background": {
-        "scripts": [
-            "background.js"
-        ],
-        "persistent": false
+        "service_worker": "sw.js"
     },
     "content_scripts": [
         {
-            "matches": [
-                "https://aulavirtual.uji.es/*",
-                "https://www.uji.es/*"
-            ],
             "js": [
                 "content.js"
+            ],
+            "matches": [
+                "https://aulavirtual.uji.es/*"
             ]
         }
     ],
-    "browser_action": {
+    "action": {
         "default_popup": "popup.html"
     },
     "icons": {
