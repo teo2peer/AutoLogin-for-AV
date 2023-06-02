@@ -10,12 +10,24 @@ document.addEventListener("DOMContentLoaded", function () {
         buttonMessage.textContent = (toggleSwitch.checked) ? "Activado" : "Desactivado";
         chrome.storage.local.set({ "extensionEnabled": toggleSwitch.checked }, function () {
         });
+
+        if (!toggleSwitch.checked) {
+            statusMessage.textContent = "Desactivada, activa la extensión para no volver a tener que iniciar sesión.";
+        } else {
+            chrome.storage.local.get("copiedCookie", function (cookie) {
+                if (!cookie.copiedCookie) {
+                    statusMessage.textContent = "Activada, pero debes iniciar sesión por primera vez en el Aula Virtual.";
+                } else {
+                    statusMessage.textContent = "Activada, no tienes que volver a iniciar sesión en el Aula Virtual.";
+                }
+            });
+        }
     });
 
 
     chrome.storage.local.get("extensionEnabled", function (data) {
         toggleSwitch.checked = data.extensionEnabled;
-        console.log(data.extensionEnabled);
+
         buttonMessage.textContent = (data.extensionEnabled) ? "Activado" : "Desactivado";
 
         if (!data.extensionEnabled) {
