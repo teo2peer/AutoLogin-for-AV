@@ -1,8 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
     var toggleSwitch = document.getElementById("toggleSwitch");
     var cookieText = document.getElementById("cookieText");
+    var moreInfoButton = document.getElementById("moreInfoButton");
     var statusMessage = document.getElementById("statusMessage");
     var buttonMessage = document.getElementById("buttonMessage");
+
 
 
 
@@ -38,12 +40,18 @@ document.addEventListener("DOMContentLoaded", function () {
                     statusMessage.textContent = "Activada, pero debes iniciar sesión por primera vez en el Aula Virtual.";
                 } else {
                     statusMessage.textContent = "Activada, no tienes que volver a iniciar sesión en el Aula Virtual.";
+                    cookieText.textContent = cookie.copiedCookie;
                 }
             });
         }
     });
 
 
+    // More info button click toggle cookieContainer
+    moreInfoButton.addEventListener("click", function () {
+        var cookieContainer = document.getElementById("cookieContainer");
+        cookieContainer.classList.toggle("hidden");
+    });
 
 
 });
