@@ -29,6 +29,9 @@
             "js": [
                 "/js/content.js"
             ],
+            "css": [
+                "/css/content.css"
+            ],
             "matches": [
                 "https://aulavirtual.uji.es/*"
             ]
