@@ -1,43 +1,33 @@
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 
 
+
+
     if (changeInfo && changeInfo.status === "complete" && tab.url && tab.url.startsWith("https://aulavirtual.uji.es/")) {
 
 
 
 
+        var cookiesList = ["MoodleSessionaulavirtualuji", "MDL_SSP_AuthToken", "MDL_SSP_SessID"];
+        for (var i = 0; i < cookiesList.length; i++) {
+            chrome.cookies.get({
+                url: "https://aulavirtual.uji.es",
+                name: cookiesList[i]
+            }, function (cookie) {
+                if (cookie && tab.url == "https://aulavirtual.uji.es/my/courses.php" && tab.url != "https://aulavirtual.uji.es/login/index.php") {
 
-        chrome.cookies.get({
-            url: "https://aulavirtual.uji.es",
-            name: "MoodleSessionaulavirtualuji"
-        }, function (cookie) {
-            if (cookie) {
-                chrome.storage.local.set({ "copiedCookie": cookie.value }, function () {
-                    console.log("Cookie copiada y guardada.");
-                });
-            } else {
-                chrome.storage.local.get("copiedCookie", function (data) {
-                    if (data.copiedCookie) {
-                        chrome.cookies.set({
-                            url: "https://aulavirtual.uji.es",
-                            name: "MoodleSessionaulavirtualuji",
-                            value: data.copiedCookie,
-                            secure: true,
-                            httpOnly: true
-                        }, function (newCookie) {
-                            console.log("Cookie restaurada.");
-                        });
-                    }
-                });
-            }
-        });
+                    chrome.storage.local.set({ [cookie.name]: cookie }, function () {
+                        console.log("Cookie " + cookie.name + " copiada y guardada.");
+                    });
+                }
+
+
+            });
+        }
+
 
 
         if (tab.url === "https://aulavirtual.uji.es/login/index.php") {
-
-
-
-
 
             chrome.storage.local.get("extensionEnabled", function (data) {
                 if (data.extensionEnabled != true) {
@@ -63,7 +53,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                             if (now - data.loginAttemptTime > 300000) {
                                 chrome.storage.local.set({ "loginAttempt": 1 }, function () {
                                     chrome.storage.local.set({ "loginAttemptTime": now }, function () {
-                                        chrome.tabs.update(tabId, { url: "https://aulavirtual.uji.es/auth/saml2/login.php?wants=https%3A%2F%2Faulavirtual.uji.es%2Fmy%2Fcourses.php&passive=off" });
+                                        // chrome.tabs.update(tabId, { url: "https://aulavirtual.uji.es/auth/saml2/login.php?wants=https%3A%2F%2Faulavirtual.uji.es%2Fmy%2Fcourses.php&passive=off" });
                                     });
                                 }
                                 );
@@ -75,7 +65,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                                 }
                                 chrome.storage.local.set({ "loginAttempt": data.loginAttempt + 1 }, function () {
                                     chrome.storage.local.set({ "loginAttemptTime": now }, function () {
-                                        chrome.tabs.update(tabId, { url: "https://aulavirtual.uji.es/auth/saml2/login.php?wants=https%3A%2F%2Faulavirtual.uji.es%2Fmy%2Fcourses.php&passive=off" });
+                                        // chrome.tabs.update(tabId, { url: "https://aulavirtual.uji.es/auth/saml2/login.php?wants=https%3A%2F%2Faulavirtual.uji.es%2Fmy%2Fcourses.php&passive=off" });
                                     });
                                 });
                             }
@@ -84,7 +74,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
                         chrome.storage.local.set({ "loginAttempt": 1 }, function () {
                             var now = new Date();
                             chrome.storage.local.set({ "loginAttemptTime": now }, function () {
-                                chrome.tabs.update(tabId, { url: "https://aulavirtual.uji.es/auth/saml2/login.php?wants=https%3A%2F%2Faulavirtual.uji.es%2Fmy%2Fcourses.php&passive=off" });
+                                // chrome.tabs.update(tabId, { url: "https://aulavirtual.uji.es/auth/saml2/login.php?wants=https%3A%2F%2Faulavirtual.uji.es%2Fmy%2Fcourses.php&passive=off" });
                             });
                         });
                     }
@@ -96,11 +86,24 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     }
 });
 
+
+
+
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    console.log("Received %o from %o, frame", request, sender.tab, sender.frameId);
+
+    var cookiesList = ["MoodleSessionaulavirtualuji", "MDL_SSP_AuthToken", "MDL_SSP_SessID"];
     if (request.action === "getCopiedCookie") {
-        chrome.storage.local.get("copiedCookie", function (data) {
-            (data) ? sendResponse({ cookie: data.copiedCookie }) : sendResponse({ cookie: null });
+        var json = {}
+        var cookie = chrome.storage.local.get(cookiesList);
+        Promise.resolve(cookie).then(function (value) {
+            sendResponse(value);
+
         });
+
+
         return true;
     }
+
 });

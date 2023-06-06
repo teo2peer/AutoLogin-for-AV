@@ -7,8 +7,8 @@
     <link rel="icon" href="icon36.png" type="image/x-icon" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <script src="popup.js"></script>
+    <link rel="stylesheet" href="/css/styles.css">
+    <script src="/js/popup.js"></script>
     <meta charset="UTF-8">
 </head>
 
@@ -25,11 +25,17 @@
         <p class="button-message" id="buttonMessage"></p>
         <h3 id="statusMessage"></h3>
 
-        <button class="button" id="moreInfoButton">Mostrar detalles</button>
+        <button class="button raised blue" id="start">Iniciar</button>
+        <button class="button raised blue" id="moreInfoButton">Mostrar detalles</button>
 
         <div id="cookieContainer" class="hidden">
-            <h2>Cookie de inicio de session:</h2>
-            <p id="cookieText"></p>
+            <h2>Cookies guardadas en tu ordenador:</h2>
+            <p>MDL_Session</p>
+            <p class="cookieText" id="MoodleSessionaulavirtualuji"></p>
+            <p>MDL_SSP_Auth</p>
+            <p class="cookieText" id="MDL_SSP_AuthToken"></p>
+            <p>MDL_SSP_SesID</p>
+            <p class="cookieText" id="MDL_SSP_SessID"></p>
         </div>
 
 

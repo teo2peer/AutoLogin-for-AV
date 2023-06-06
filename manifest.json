@@ -1,26 +1,33 @@
 {
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAps1UAv8P7rJKZDcQtwgRFqku/yiftidhB5wCC6Tgf+VBFbWhFJYMTeom9VLmn/6fm7EaCtlUYzETKrIbUgfqPzIh5DkjAoM18ZpiiYTb6U25LONzuDFqLdqc8T3XkM03A6tvK6qcEh4im33cmRdK1DWbfBGyShRtzlDVoimiiBTEd63YR9wzLIgpM8tU8H41OB6Tme9GNVfdAgu8oSLmWw4cW+8lfecdPct2j5wf6n6JUc5NcTcvRXnYasQd6dBMZKMnufPhu3YVLlqWiElEDLf+X7EF4k4GtSGNMwOYiS30aS8KYSVYmU4ttJpJSKnf4S3ws07P/FXug2g80x6W0wIDAQAB",
     "manifest_version": 3,
     "name": "AutoUJI by Teo2Peer",
     "description": "Inicio de sesión automático en el Aula Virtual de la UJI.",
     "version": "1.0",
     "permissions": [
+        "tabs",
         "cookies",
+        "contextMenus",
+        "unlimitedStorage",
         "storage"
     ],
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self';",
+        "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self';"
+    },
     "host_permissions": [
-        "https://aulavirtual.uji.es/",
-        "https://www.uji.es/"
+        "*://*.uji.es/*"
     ],
     "optional_host_permissions": [
         "*://*/*"
     ],
     "background": {
-        "service_worker": "sw.js"
+        "service_worker": "/js/sw.js"
     },
     "content_scripts": [
         {
             "js": [
-                "content.js"
+                "/js/content.js"
             ],
             "matches": [
                 "https://aulavirtual.uji.es/*"
@@ -31,9 +38,9 @@
         "default_popup": "popup.html"
     },
     "icons": {
-        "16": "icon16.png",
-        "32": "icon32.png",
-        "48": "icon48.png",
-        "128": "icon128.png"
+        "16": "img/icon16.png",
+        "32": "img/icon32.png",
+        "48": "img/icon48.png",
+        "128": "img/icon128.png"
     }
 }
