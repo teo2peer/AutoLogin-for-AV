@@ -1,4 +1,4 @@
-# Auto UJI login by Teo2Peer
+# AutoUJI by Teo2Peer
 
 AutoUJI  by Teo2Peer es una extensión para Google Chrome diseñada para simplificar y agilizar el proceso de inicio de sesión en el Aula Virtual de la Universidad Jaume I (UJI). Olvídate de introducir manualmente tus credenciales de usuario y contraseña, así como de lidiar con el molesto segundo factor de autenticación. Esta extensión, que garantiza la seguridad de tus datos, no almacena ninguna información personal.
 
