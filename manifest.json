@@ -9,7 +9,8 @@
         "cookies",
         "contextMenus",
         "unlimitedStorage",
-        "storage"
+        "storage",
+        "activeTab"
     ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self';",
@@ -22,12 +23,16 @@
         "*://*/*"
     ],
     "background": {
-        "service_worker": "/js/sw.js"
+        "service_worker": "/js/sw.js",
+        "scripts": [
+            "/js/jquery.js"
+        ]
     },
     "content_scripts": [
         {
             "js": [
-                "/js/content.js"
+                "/js/content.js",
+                "/js/jquery.js"
             ],
             "css": [
                 "/css/content.css"

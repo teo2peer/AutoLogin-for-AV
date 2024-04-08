@@ -5,73 +5,92 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     var toggleSwitch = document.getElementById("toggleSwitch");
-    var moreInfoButton = document.getElementById("moreInfoButton");
     var statusMessage = document.getElementById("statusMessage");
-    var buttonMessage = document.getElementById("buttonMessage");
-    var buttonStart = document.getElementById("start");
-    var cookiesList = ["MoodleSessionaulavirtualuji", "MDL_SSP_AuthToken", "MDL_SSP_SessID"];
+
+
+
+
+
+ 
+
+
+
+
+    $("#config").click(function () {
+        window.location.href = "config1.html";
+    });
+
+
 
 
 
     toggleSwitch.addEventListener("change", function () {
-        buttonMessage.textContent = (toggleSwitch.checked) ? "Activado" : "Desactivado";
-        chrome.storage.local.set({ "extensionEnabled": toggleSwitch.checked }, function () {
+        chrome.storage.local.get("configurations", function (data) {
+            extensionConfig = data.configurations || [];
+
+
+            extensionConfig.extensionEnabled = toggleSwitch.checked;
+            console.log(extensionConfig);
+            chrome.storage.local.set({ "configurations": extensionConfig });
+    
+            buttonMessage.textContent = (toggleSwitch.checked) ? "Activado" : "Desactivado";
+            statusMessage.textContent = statusMessageDisplay(extensionConfig.extensionEnabled, extensionConfig.configured );
         });
-
-        if (!toggleSwitch.checked) {
-            statusMessage.textContent = "Desactivada, activa la extensión para no volver a tener que iniciar sesión.";
-        } else {
-            chrome.storage.local.get("copiedCookie", function (cookie) {
-                if (!cookie.copiedCookie) {
-                    statusMessage.textContent = "Activada, pero debes iniciar sesión por primera vez en el Aula Virtual.";
-                } else {
-                    statusMessage.textContent = "Activada, no tienes que volver a iniciar sesión en el Aula Virtual.";
-                }
-            });
-        }
     });
 
+    // clear configurations
+    // chrome.storage.local.clear();
 
-    chrome.storage.local.get("extensionEnabled", function (data) {
-        toggleSwitch.checked = data.extensionEnabled;
-
-        buttonMessage.textContent = (data.extensionEnabled) ? "Activado" : "Desactivado";
-
-        if (!data.extensionEnabled) {
-            statusMessage.textContent = "Desactivada, activa la extensión para no volver a tener que iniciar sesión.";
-        } else {
-
-            chrome.runtime.sendMessage({ action: "getCopiedCookie" }, function (response) {
-                console.log(response)
-                if (!response[cookiesList[0]] || !response[cookiesList[1]] || !response[cookiesList[2]]) {
-                    statusMessage.textContent = "Activada, pero debes iniciar sesión por primera vez en el Aula Virtual.";
-                } else {
-                    statusMessage.textContent = "Activada, no tienes que volver a iniciar sesión en el Aula Virtual.";
-                    cookiesList.forEach(element => {
-                        var text = document.getElementById(element);
-                        text.textContent = response[element].value;
-                    });
-                }
-            });
+    chrome.storage.local.get("configurations", function (data) {
+        var extensionConfig = data.configurations || [];
+    
+        if (!extensionConfig || extensionConfig.length == 0) {
+            extensionConfig = {
+                extensionEnabled: false, 
+                configured: false,
+                username: "",
+                page: 1,
+                password: "",
+                secret: "",
+            };
+            // Guardamos el array de configuraciones actualizado en el almacenamiento local
+            chrome.storage.local.set({ "configurations": extensionConfig });
         }
-    });
+        console.log(extensionConfig);
 
+        // Actualizamos el estado del toggle switch, el texto del botón y el mensaje de estado
+        toggleSwitch.checked = extensionConfig.extensionEnabled;
+        buttonMessage.textContent = (toggleSwitch.checked) ? "Activado" : "Desactivado";
+        statusMessage.textContent = statusMessageDisplay(extensionConfig.extensionEnabled, extensionConfig.configured);
+        
+        page = extensionConfig.page;
+        
 
-
-
-    // buttonStart.addEventListener("click", restoreCookies);
-
-
-
-    // More info button click toggle cookieContainer
-    moreInfoButton.addEventListener("click", function () {
-        var cookieContainer = document.getElementById("cookieContainer");
-        cookieContainer.classList.toggle("hidden");
+        if(page == 1){
+            window.location.href = "config1.html";
+        }else if(page == 2){
+            window.location.href = "config2.html";
+        }else if(page == 3){
+            window.location.href = "config3.html";
+        }
     });
 
 
 });
 
+function statusMessageDisplay(state, configured){
+    console.log(state + " " + configured);
+    if(state){
+        if(configured){
+            return "Activada, no tienes que volver a iniciar sesión en el Aula Virtual.";
+        }else{
+            return "Activada, pero debes configurar la extension por primera vez.";
+        }
+    }else{
+        return "Desactivada, activa la extensión para no volver a tener que iniciar sesión.";
+    }
+
+}
 
 
 

@@ -1,3 +1,10 @@
+* {
+    box-sizing: border-box;
+    position: relative;
+    padding: 0;
+    margin: 0;
+  }
+
 body {
     font-family: 'Roboto', sans-serif;
     padding: 20px;
@@ -18,7 +25,8 @@ h1 {
 .slider-container {
     display: flex;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    margin-top: 10px;
 }
 
 .toggle-switch {
@@ -30,6 +38,9 @@ h1 {
     display: inline-block;
     width: 50px;
     height: 26px;
+}
+.button-message{
+    margin: 0;
 }
 
 .slider {
@@ -119,7 +130,7 @@ input[type="checkbox"]:checked+.slider:before {
     box-sizing: border-box;
     font-size: 1em;
     font-family: inherit;
-    border-radius: 3px;
+    border-radius: 7px;
     margin: 0.1rem;
     transition: all 0.2s ease;
     -webkit-user-select: none;
@@ -132,10 +143,13 @@ input[type="checkbox"]:checked+.slider:before {
     color: inherit;
     position: relative;
     transform: translateZ(0);
+    border: 1px solid rgb(163, 162, 162);
+
 }
 
 .button * {
     pointer-events: none;
+    
 }
 
 .button:hover:not(.raised),
@@ -216,3 +230,67 @@ input[type="checkbox"]:checked+.slider:before {
 .button.action:active:not(.raised):before {
     background-color: rgba(0, 0, 0, 0.1);
 }
+
+
+.blue{
+    background-color: #2196f3;
+    color: white;
+}
+
+
+
+
+
+/**----------------------
+ *    Stepper
+ *------------------------**/
+
+ .register-stepper {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  margin: 0 auto 1.5em;
+}
+.register-stepper::before {
+  z-index: 0;
+  content: "";
+  display: block;
+  position: absolute;
+  height: 2px;
+  top: calc(50% - 1px);
+  background: #cecece;
+  width: calc(100% - 20px);
+}
+.register-stepper .step {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  border: 2px solid #cecece;
+  color: #cecece;
+  background-color: #fff;
+  border-radius: 50%;
+  min-width: 25px;
+  min-height: 25px;
+  line-height: 20px;
+  font-size: 16px;
+}
+.register-stepper .step-active {
+  color: #00c4b5;
+  background-color: #fff;
+  border-color: #00c4b5;
+}
+.register-stepper .step-done {
+  color: #a7e4b5;
+  border-color: #a7e4b5;
+}
+.register-stepper .step-number {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+
+
