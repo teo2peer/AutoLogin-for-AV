@@ -23,10 +23,8 @@
         "*://*/*"
     ],
     "background": {
-        "service_worker": "/js/sw.js",
-        "scripts": [
-            "/js/jquery.js"
-        ]
+        "service_worker": "/js/sw.js"
+        
     },
     "content_scripts": [
         {
@@ -37,8 +35,10 @@
             "css": [
                 "/css/content.css"
             ],
+            "all_frames": true,
             "matches": [
-                "https://aulavirtual.uji.es/*"
+                "https://aulavirtual.uji.es/*",
+                "https://xmlrpc.uji.es/*"
             ]
         }
     ],

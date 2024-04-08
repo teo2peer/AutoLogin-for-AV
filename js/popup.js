@@ -30,7 +30,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
             extensionConfig.extensionEnabled = toggleSwitch.checked;
-            console.log(extensionConfig);
             chrome.storage.local.set({ "configurations": extensionConfig });
     
             buttonMessage.textContent = (toggleSwitch.checked) ? "Activado" : "Desactivado";
@@ -56,7 +55,6 @@ document.addEventListener("DOMContentLoaded", function () {
             // Guardamos el array de configuraciones actualizado en el almacenamiento local
             chrome.storage.local.set({ "configurations": extensionConfig });
         }
-        console.log(extensionConfig);
 
         // Actualizamos el estado del toggle switch, el texto del botón y el mensaje de estado
         toggleSwitch.checked = extensionConfig.extensionEnabled;
@@ -64,6 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
         statusMessage.textContent = statusMessageDisplay(extensionConfig.extensionEnabled, extensionConfig.configured);
         
         page = extensionConfig.page;
+        
         
 
         if(page == 1){
