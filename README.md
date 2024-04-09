@@ -9,7 +9,7 @@ AutoLogin by Teo2Peer es una extensión para Google Chrome diseñada para simpli
 
 
 1. Descarga el archivo zip de la extensión desde el siguiente boton
-[![Descargar zip](https://custom-icon-badges.demolab.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Download zip")](https://github.com/DenverCoder1/readme-download-button-action/archive/1.0.2.zip)
+[![Descargar zip](https://custom-icon-badges.demolab.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Descargar zip")](https://github.com/DenverCoder1/readme-download-button-action/archive/1.0.2.zip)
 
 2. Descomprime el archivo zip en una carpeta, por ejemplo, en el escritorio con el explorador de archivos de windows o cualquier programa como WinRAR o 7zip.
 3. Abre el navegador Chrome y ve a la página de extensiones (`chrome://extensions`).

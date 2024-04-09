@@ -5,7 +5,7 @@ $(document).ready(function () {
         $("#username").val(extensionConfig.username);
     });
 
-    $("#save").click(function () {
+    $("#submit").click(function () {
         var username = $("#username").val();
         var password = $("#password").val();
 
