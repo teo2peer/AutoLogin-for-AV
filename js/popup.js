@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     $("#config").click(function () {
-        window.location.href = "config1.html";
+        window.location.href = "/pages/config/config.html";
     });
 
 
@@ -66,11 +66,11 @@ document.addEventListener("DOMContentLoaded", function () {
         
 
         if(page == 1){
-            window.location.href = "config1.html";
+            window.location.href = "/pages/setup/config1.html";
         }else if(page == 2){
-            window.location.href = "config2.html";
+            window.location.href = "/pages/setup/config2.html";
         }else if(page == 3){
-            window.location.href = "config3.html";
+            window.location.href = "/pages/setup/config3.html";
         }
     });
 

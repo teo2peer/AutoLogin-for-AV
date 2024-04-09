@@ -16,7 +16,17 @@ chrome.storage.local.get("configurations", async function (data) {
     var extensionConfig = data.configurations || [];
     if (extensionConfig.extensionEnabled == true) {
 
-
+        // get the url without ? and & parameters
+        var url = window.location.href.split("?")[0].split("&")[0];
+        chrome.storage.local.get("lastUrl", function (data) {
+            var lastUrl = data.lastUrl || "";
+            if (lastUrl != url) {
+                chrome.storage.local.set({ "lastUrl": url });
+            }else{
+                alert("Ha ocurrido un error, por favor, introduce los datos manualmente.");
+                return;
+            }
+        });
 
         if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {
             var button = document.createElement("a");
@@ -49,22 +59,7 @@ chrome.storage.local.get("configurations", async function (data) {
 function startAutoLogin() {
     var button = document.getElementsByClassName("btn login-identityprovider-btn btn-block")[1];
     button.click();
-    // // hacer un form de post
-    // var form = document.createElement("form");
-    // form.setAttribute("method", "post");
-    // form.setAttribute("action", "https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php");
 
-    // var input = document.createElement("input");
-    // input.setAttribute("type", "hidden");
-    // input.setAttribute("name", "username");
-    // input.setAttribute("value", extensionConfig.username);
-    // form.appendChild(input);
-
-    // input = document.createElement("input");
-    // input.setAttribute("type", "hidden");
-    // input.setAttribute("name", "password");
-    // input.setAttribute("value", extensionConfig.password);
-    // form.appendChild(input);
 }
 
 async function generateTOTP(secret) {
