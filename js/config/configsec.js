@@ -1,4 +1,5 @@
 $(document).ready(function () {
+
     // guardar en local storage
     chrome.storage.local.get("configurations", function (data) {
         var extensionConfig = data.configurations || [];

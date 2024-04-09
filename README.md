@@ -8,7 +8,9 @@ AutoLogin by Teo2Peer es una extensión para Google Chrome diseñada para simpli
 ## Instalación
 
 
-1. Descarga el archivo zip "Source code(zip") de la extensión desde la página de [Releases](https://github.com/teo2peer/AutoLogin-for-UJI/releases) en este repositorio o haz click en el boton verde que pone `<> code` y haz click en Descargar Zip.
+1. Descarga el archivo zip de la extensión desde el siguiente boton
+[![Descargar zip](https://custom-icon-badges.demolab.com/badge/-Download-blue?style=for-the-badge&logo=download&logoColor=white "Download zip")](https://github.com/DenverCoder1/readme-download-button-action/archive/1.0.2.zip)
+
 2. Descomprime el archivo zip en una carpeta, por ejemplo, en el escritorio con el explorador de archivos de windows o cualquier programa como WinRAR o 7zip.
 3. Abre el navegador Chrome y ve a la página de extensiones (`chrome://extensions`).
 4. Habilita el "Modo de desarrollador" en la parte superior derecha de la página.
