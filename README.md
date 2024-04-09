@@ -1,5 +1,8 @@
 # AutoLogin  by Teo2Peer
 
+![GitHub Repo stars](https://img.shields.io/github/stars/teo2peer/AutoLogin-for-UJI)
+
+
 AutoLogin by Teo2Peer es una extensión para Google Chrome diseñada para simplificar y agilizar el proceso de inicio de sesión en el Aula Virtual . Olvídate de introducir manualmente tus credenciales de usuario y contraseña, así como de lidiar con el molesto segundo factor de autenticación. Esta extensión, no almacena ninguna información personal. Todo se guarda en tu ordenador y **NUNCA** se compartirá ningún dato privado tuyo
 
 ## Instalación
