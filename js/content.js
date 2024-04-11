@@ -16,42 +16,51 @@ chrome.storage.local.get("configurations", async function (data) {
     var extensionConfig = data.configurations || [];
     if (extensionConfig.extensionEnabled == true) {
 
-        // get the url without ? and & parameters
+
+        // get the url without ? and & parameters and check if the last url is the same as the current one
         var url = window.location.href.split("?")[0].split("&")[0];
-        chrome.storage.local.get("lastUrl", function (data) {
-            var lastUrl = data.lastUrl || "";
-            if (lastUrl != url) {
-                chrome.storage.local.set({ "lastUrl": url });
-            }else{
-                alert("Ha ocurrido un error, por favor, introduce los datos manualmente.");
-                return;
+        // only on the login page
+        if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1 ||
+            window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1 ||
+            window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1
+        ) {
+
+            chrome.storage.local.get("lastUrl", function (data) {
+                var lastUrl = data.lastUrl || "";
+                if (lastUrl != url) {
+                    chrome.storage.local.set({ "lastUrl": url });
+                } else {
+                    alert("Ha ocurrido un error, por favor, introduce los datos manualmente.");
+                    return;
+                }
+            });
+
+            // Do something with the data depending on the url
+            if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {
+                var button = document.createElement("a");
+                button.setAttribute("class", "btn login-identityprovider-btn btn-block");
+                button.addEventListener("click", startAutoLogin);
+                button.innerHTML = "<img src=\"https://raw.githubusercontent.com/teo2peer/Auto-AulaVirtual-Login/main/img/icon32.png\" alt=\"\" style=\"width: auto;  height: auto;\">Inicia sesión automáticamente con AutoLogin by Teo2Peer";
+
+                var div = document.getElementsByClassName("login-identityproviders")[0];
+                var h2 = div.getElementsByTagName("a")[0];
+                div.insertBefore(button, h2);
+            } else if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
+                var username = document.getElementById("user");
+                username.value = extensionConfig.username;
+                var password = document.getElementById("pass");
+                password.value = extensionConfig.password;
+                var button = document.getElementById("acc_user_img");
+                button.click();
+            } else if (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1) {
+                var secret = extensionConfig.secret;
+                number = await generateTOTP(secret);
+                var input = document.getElementsByName("code")[0];
+                input.value = number;
+                var button = document.getElementsByClassName("disabled button expanded")[0];
+                button.removeAttribute("disabled");
+                button.click();
             }
-        });
-
-        if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {
-            var button = document.createElement("a");
-            button.setAttribute("class", "btn login-identityprovider-btn btn-block");
-            button.addEventListener("click", startAutoLogin);
-            button.innerHTML = "<img src=\"https://raw.githubusercontent.com/teo2peer/Auto-AulaVirtual-Login/main/img/icon32.png\" alt=\"\" style=\"width: auto;  height: auto;\">Inicia sesión automáticamente con AutoLogin by Teo2Peer";
-
-            var div = document.getElementsByClassName("login-identityproviders")[0];
-            var h2 = div.getElementsByTagName("a")[0];
-            div.insertBefore(button, h2);
-        } else if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
-            var username = document.getElementById("user");
-            username.value = extensionConfig.username;
-            var password = document.getElementById("pass");
-            password.value = extensionConfig.password;
-            var button = document.getElementById("acc_user_img");
-            button.click();
-        } else if (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1) {
-            var secret = extensionConfig.secret;
-            number = await generateTOTP(secret);
-            var input = document.getElementsByName("code")[0];
-            input.value = number;
-            var button = document.getElementsByClassName("disabled button expanded")[0];
-            button.removeAttribute("disabled");
-            button.click();
         }
     }
 });
