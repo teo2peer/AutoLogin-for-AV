@@ -12,10 +12,9 @@ function copyToClipboard(text) {
 
 
 
-chrome.storage.local.get("configurations", async function (data) {
+chrome.storage.local.get("configurations", function (data) {
     var extensionConfig = data.configurations || [];
     if (extensionConfig.extensionEnabled == true) {
-
 
         // get the url without ? and & parameters and check if the last url is the same as the current one
         var url = window.location.href.split("?")[0].split("&")[0];
@@ -31,7 +30,7 @@ chrome.storage.local.get("configurations", async function (data) {
                 var lastUrl = data.lastUrl || "";
                 if (lastUrl != url) {
                     chrome.storage.local.set({ "lastUrl": url });
-                    pageExecute();
+                    pageExecute(extensionConfig);
                 }else{
                     
                     showMessageError();
@@ -44,11 +43,10 @@ chrome.storage.local.get("configurations", async function (data) {
 });
 
 
-function pageExecute() {
+function pageExecute(extensionConfig) {
     // Do something with the data depending on the url
     if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {        
         // reset post secret
-        chrome.storage.set({ "postSecret": 0 });
         generateLoginButton();
 
     } else if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
@@ -73,11 +71,11 @@ function generateLoginButton(){
     div.insertBefore(button, h2);
 }
 
-function loginMain(username, password) {
+function loginMain(user, pass) {
     var username = document.getElementById("user");
-    username.value = extensionConfig.username;
+    username.value = user;
     var password = document.getElementById("pass");
-    password.value = extensionConfig.password;
+    password.value = pass;
     var button = document.getElementById("acc_user_img");
     button.click();
 }
@@ -114,7 +112,11 @@ async function totpLogin(secret) {
 
 
 function showMessageError(){
-    if(window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1){
+    if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {        
+        // reset post secret
+        generateLoginButton();
+
+    }else if(window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1){
         $("#loginform").appendChild('<div id="error" style="background: #902424; padding: 10px> No ha funcionado tu usuario y contrasena. Pruebalo manual y modificalo en ajustes</div>')
     }else if(window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1 ){
         $(".hide-for-print").appendChild('<div id="error" style="background: #902424; padding: 10px> El codigo F2A no ha funcionado. Pureba otra vez haciendo click aqui.</div>')
