@@ -31,6 +31,7 @@ chrome.storage.local.get("configurations", async function (data) {
                 var lastUrl = data.lastUrl || "";
                 if (lastUrl != url) {
                     chrome.storage.local.set({ "lastUrl": url });
+                    pageExecute();
                 }else{
                     
                     showMessageError();
@@ -38,38 +39,48 @@ chrome.storage.local.get("configurations", async function (data) {
                 }
             });
 
-
-            // Do something with the data depending on the url
-            if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {
-                
-                // reset post secret
-                chrome.storage.set({ "postSecret": 0 });
-
-                var button = document.createElement("a");
-                button.setAttribute("class", "btn login-identityprovider-btn btn-block");
-                button.addEventListener("click", startAutoLogin);
-                button.innerHTML = "<img src=\"https://raw.githubusercontent.com/teo2peer/Auto-AulaVirtual-Login/main/img/icon32.png\" alt=\"\" style=\"width: auto;  height: auto;\">Inicia sesión automáticamente con AutoLogin by Teo2Peer";
-
-                var div = document.getElementsByClassName("login-identityproviders")[0];
-                var h2 = div.getElementsByTagName("a")[0];
-                div.insertBefore(button, h2);
-            } else if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
-                var username = document.getElementById("user");
-                username.value = extensionConfig.username;
-                var password = document.getElementById("pass");
-                password.value = extensionConfig.password;
-                var button = document.getElementById("acc_user_img");
-                button.click();
-            } else if (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1) {
-
-                
-                var secret = extensionConfig.secret;
-                totpLogin(secret);
-                
-            }
         }
     }
 });
+
+
+function pageExecute() {
+    // Do something with the data depending on the url
+    if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {        
+        // reset post secret
+        chrome.storage.set({ "postSecret": 0 });
+        generateLoginButton();
+
+    } else if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
+        loginMain(extensionConfig.username, extensionConfig.password);
+
+    } else if (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1) {
+
+    var secret = extensionConfig.secret;
+    totpLogin(secret);
+    }
+}
+
+function generateLoginButton(){
+    
+    var button = document.createElement("a");
+    button.setAttribute("class", "btn login-identityprovider-btn btn-block");
+    button.addEventListener("click", startAutoLogin);
+    button.innerHTML = "<img src=\"https://raw.githubusercontent.com/teo2peer/Auto-AulaVirtual-Login/main/img/icon32.png\" alt=\"\" style=\"width: auto;  height: auto;\">Inicia sesión automáticamente con AutoLogin by Teo2Peer";
+
+    var div = document.getElementsByClassName("login-identityproviders")[0];
+    var h2 = div.getElementsByTagName("a")[0];
+    div.insertBefore(button, h2);
+}
+
+function loginMain(username, password) {
+    var username = document.getElementById("user");
+    username.value = extensionConfig.username;
+    var password = document.getElementById("pass");
+    password.value = extensionConfig.password;
+    var button = document.getElementById("acc_user_img");
+    button.click();
+}
 
 function startAutoLogin() {
     var button = document.getElementsByClassName("btn login-identityprovider-btn btn-block")[1];
