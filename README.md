@@ -58,4 +58,4 @@ Próximamente la aplicación estara disponible en la Chrome Web Store, esta pend
 
 ## Licencia
 
-Este proyecto está bajo la licencia [MIT](LICENSE).
+Este proyecto está bajo la licencia [GNU](LICENSE).
