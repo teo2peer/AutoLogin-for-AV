@@ -31,14 +31,18 @@ $(document).ready(function () {
 
         
 
-        // coger los datos
-
-        if (window.location.href.indexOf("web-version") > -1) {
-            window.location.href = "/pages/setup/web-version/config3.html";
-        } else {
-            window.location.href = "/pages/setup/config3.html";
-        }
+        // delay function porque a veces no de da tiempo a guardar los datos, async va raro
+        setTimeout(function () {
+            if (window.location.href.indexOf("web-version") > -1) {
+                window.location.href = "/pages/setup/web-version/config3.html";
+            } else {
+                window.location.href = "/pages/setup/config3.html";
+            }
+        }, 200);
+        
     });
+        
+        
 
 
     function showErrorMessage(message){
@@ -49,6 +53,7 @@ $(document).ready(function () {
 
 
 async function saveData(username, password){
+    console.log("Guardando datos");
     // guardar en local storage
     await chrome.storage.local.get("configurations", function (data) {
         var extensionConfig = data.configurations || [];
@@ -74,7 +79,7 @@ async function saveData(username, password){
         extensionConfig.secret = "";
     
         // Guardamos el array de configuraciones actualizado en el almacenamiento local
-        chrome.storage.local.set({ "configurations": extensionConfig });
+        console.log("Datos guardados" + extensionConfig);
     });
 }
 
