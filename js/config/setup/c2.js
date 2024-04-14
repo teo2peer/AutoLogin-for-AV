@@ -23,17 +23,18 @@ $(document).ready(function () {
             return;
         }
 
-        await saveData(username, password);
+        $(this).attr("disabled", true);
+
+        // Guardamos los datos en el almacenamiento local y redirigimos a la siguiente página
+        await saveData(username, password).then(() => {
+            if (window.location.href.indexOf("web-version") > -1) {
+                window.location.href = "/pages/setup/web-version/config3.html";
+            } else {
+                window.location.href = "/pages/setup/config3.html";
+            }
+        })
 
 
-
-
-
-        if (window.location.href.indexOf("web-version") > -1) {
-            window.location.href = "/pages/setup/web-version/config3.html";
-        } else {
-            window.location.href = "/pages/setup/config3.html";
-        }
 
 
     });
@@ -49,9 +50,8 @@ $(document).ready(function () {
 
 
 async function saveData(username, password) {
-    console.log("Guardando datos");
     // guardar en local storage
-    await chrome.storage.local.get("configurations", function (data) {
+    await chrome.storage.local.get("configurations").then(async (data) => {
         var extensionConfig = data.configurations || [];
 
         if (!extensionConfig || extensionConfig.length == 0) {
@@ -75,10 +75,8 @@ async function saveData(username, password) {
         extensionConfig.secret = "";
 
         // Guardamos el array de configuraciones actualizado en el almacenamiento local
+        await chrome.storage.local.set({ "configurations": extensionConfig });
+    })
 
-        chrome.storage.local.set({ "configurations": extensionConfig });
-
-
-    });
 }
 
