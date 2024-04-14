@@ -52,7 +52,12 @@ $(document).ready(function () {
             // Guardamos el array de configuraciones actualizado en el almacenamiento local
             chrome.storage.local.set({ "configurations": extensionConfig });
         });
-        window.location.href = "/pages/setup/config3.html";
+
+        if (window.location.href.indexOf("web-version") > -1) {
+            window.location.href = "/pages/setup/web-version/config3.html";
+        } else {
+            window.location.href = "/pages/setup/config3.html";
+        }
     });
 
 

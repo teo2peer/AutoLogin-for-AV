@@ -14,7 +14,7 @@
 </head>
 
 <body>
-    <div id="configurator">
+    <div id="configurator-Web">
         <div class="container">
 
             <div class="center">
@@ -22,22 +22,26 @@
                 <div class="register-stepper">
                     <div class="step step-done"><span class="step-number">1</span></div>
                     <div class="step step-done"><span class="step-number">2</span></div>
-                    <div class="step step-done"><span class="step-number">3</span></div>
+                    <div class="step step-active"><span class="step-number">3</span></div>
                 </div>
 
-                <h3>Configuracion finalizada</h3>
+                <h3>QR de Autenticator</h3>
                 <br>
-                <h1 class="text-center">ATENCION</h1>
-                Recuerda hacer una foto al codigo QR y a escanearlo con tu telefono porque en otro ordenador como los de
-                la
-                UJI esta aplicacion no esta instalada y no te funcionara.
-                Para poder seguir iniciando sesion en la UJI recuerda escanear este QR.
+                Para poder saltarse el segundo factor de autenticacion tienes que seguir el siguiente tutorial
 
+                <div class="alert alert-danger mt-2" style="display: none;" id="error" role="alert"></div>
 
-                <a href="/popup.html" class="btn btn-primary mt-2">Finalizar</a>
+                <div class="fix-bottom center pb-4">
+                    <a href="/pages/tutorial.pdf" target="_blank" class="btn btn-primary mt-2">Ver Tutorial</a>
+                    <button class="btn btn-primary mt-3" id="captura">Capturar QR</button>
+                </div>
+
             </div>
         </div>
     </div>
+    <script src="/js/jquery.js"></script>
+    <script src="/js/vendor/qr-scanner-master/qr-scanner.umd.min.js"></script>
+    <script src="/js/config/setup/c3.js"></script>
 
 </body>
 

@@ -54,7 +54,11 @@ $(document).ready(function () {
                 chrome.storage.local.set({ "configurations": extensionConfig });
             });
 
-            window.location.href = "/pages/setup/config4.html";
+            if (window.location.href.indexOf("web-version") > -1) {
+                window.location.href = "/pages/setup/web-version/config4.html";
+            } else {
+                window.location.href = "/pages/setup/config4.html";
+            }
         });
 
     });
