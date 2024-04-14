@@ -1,9 +1,8 @@
 {
-    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAps1UAv8P7rJKZDcQtwgRFqku/yiftidhB5wCC6Tgf+VBFbWhFJYMTeom9VLmn/6fm7EaCtlUYzETKrIbUgfqPzIh5DkjAoM18ZpiiYTb6U25LONzuDFqLdqc8T3XkM03A6tvK6qcEh4im33cmRdK1DWbfBGyShRtzlDVoimiiBTEd63YR9wzLIgpM8tU8H41OB6Tme9GNVfdAgu8oSLmWw4cW+8lfecdPct2j5wf6n6JUc5NcTcvRXnYasQd6dBMZKMnufPhu3YVLlqWiElEDLf+X7EF4k4GtSGNMwOYiS30aS8KYSVYmU4ttJpJSKnf4S3ws07P/FXug2g80x6W0wIDAQAB",
     "manifest_version": 3,
-    "name": "AutoLogin by Teo2Peer",
+    "name": "AutoLogin by TeoDev",
     "description": "Inicio de sesión automático en el Aula Virtual.",
-    "version": "1.0",
+    "version": "2.0",
     "permissions": [
         "tabs",
         "cookies",
