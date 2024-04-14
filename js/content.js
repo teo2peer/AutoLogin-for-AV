@@ -1,30 +1,16 @@
 
-
-function copyToClipboard(text) {
-    var textarea = document.createElement("textarea");
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-}
-
-
-
-
+/**
+ * Fetches the configurations from the local storage and checks if the extension is enabled.
+ * If enabled, it checks the current URL and executes the pageExecute function if the URL matches certain conditions.
+ */
 chrome.storage.local.get("configurations", function (data) {
     var extensionConfig = data.configurations || [];
     if (extensionConfig.extensionEnabled == true) {
-
-        // get the url without ? and & parameters and check if the last url is the same as the current one
         var url = window.location.href.split("?")[0].split("&")[0];
-        // only on the login page
         if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1 ||
             window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1 ||
             (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1 )
         ){
-
-            // get the url without ? and & parameters
             var url = window.location.href.split("?")[0].split("&")[0];
             chrome.storage.local.get("lastUrl", function (data) {
                 var lastUrl = data.lastUrl || "";
@@ -32,45 +18,68 @@ chrome.storage.local.get("configurations", function (data) {
                     chrome.storage.local.set({ "lastUrl": url });
                     pageExecute(extensionConfig);
                 }else{
-                    
                     showMessageError();
                     return;
                 }
             });
-
         }
     }
 });
 
-
+/**
+ * Executes actions based on the current URL.
+ * @param {Object} extensionConfig - The extension configuration object.
+ */
 function pageExecute(extensionConfig) {
-    // Do something with the data depending on the url
     if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {        
-        // reset post secret
         generateLoginButton();
-
-    } else if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
-        loginMain(extensionConfig.username, extensionConfig.password);
-
-    } else if (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1) {
-
-    var secret = extensionConfig.secret;
-    totpLogin(secret);
+    } 
+    if(checkIfClicked()){
+        if (window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1) {
+            loginMain(extensionConfig.username, extensionConfig.password);
+        } else if (window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1) {
+            var secret = extensionConfig.secret;
+            totpLogin(secret);
+        }
     }
 }
 
+/**
+ * Checks if the login button was clicked.
+ * @returns {boolean} - True if the login button was clicked, false otherwise.
+ */
+function checkIfClicked() {
+    chrome.storage.local.get("clickedLogin").then(function (data) {
+        return data.clickedLogin || false;
+    });
+} 
+
+/**
+ * Resets the clickedLogin value in the local storage.
+ */
+function resetClicked() {
+    chrome.storage.local.set({ "clickedLogin": false });
+}
+
+/**
+ * Generates the login button and adds it to the page.
+ */
 function generateLoginButton(){
-    
+    resetClicked();
     var button = document.createElement("a");
     button.setAttribute("class", "btn login-identityprovider-btn btn-block");
     button.addEventListener("click", startAutoLogin);
     button.innerHTML = "<img src=\"https://raw.githubusercontent.com/teo2peer/Auto-AulaVirtual-Login/main/img/icon32.png\" alt=\"\" style=\"width: auto;  height: auto;\">Inicia sesión automáticamente con AutoLogin by Teo2Peer";
-
     var div = document.getElementsByClassName("login-identityproviders")[0];
     var h2 = div.getElementsByTagName("a")[0];
     div.insertBefore(button, h2);
 }
 
+/**
+ * Logs in the user by filling in the username and password fields and clicking the login button.
+ * @param {string} user - The username.
+ * @param {string} pass - The password.
+ */
 function loginMain(user, pass) {
     var username = document.getElementById("user");
     username.value = user;
@@ -80,27 +89,34 @@ function loginMain(user, pass) {
     button.click();
 }
 
+/**
+ * Starts the auto login process by clicking the login button.
+ */
 function startAutoLogin() {
     var button = document.getElementsByClassName("btn login-identityprovider-btn btn-block")[1];
     button.click();
-
 }
 
+/**
+ * Generates a TOTP code based on the provided secret.
+ * @param {string} secret - The secret used to generate the TOTP code.
+ * @returns {string} - The generated TOTP code.
+ */
 async function generateTOTP(secret) {
-
     var totp = new jsOTP.totp();
     var timeCode = await totp.getOtp(secret);
-
     var expireCode= 30 - (new Date().getSeconds() % 30);
     if(expireCode <= 1){
-        // delay 2 seconds
         await delay(2000);
         timeCode = await totp.getOtp(secret);
     }
-
     return timeCode;
 }
 
+/**
+ * Logs in the user by filling in the TOTP code field and clicking the login button.
+ * @param {string} secret - The secret used to generate the TOTP code.
+ */
 async function totpLogin(secret) {
     var number = await generateTOTP(secret);    
     var input = document.getElementsByName("code")[0];
@@ -110,12 +126,12 @@ async function totpLogin(secret) {
     button.click();
 }
 
-
+/**
+ * Shows an error message based on the current URL.
+ */
 function showMessageError(){
     if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {        
-        // reset post secret
         generateLoginButton();
-
     }else if(window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1){
         $("#loginform").appendChild('<div id="error" style="background: #902424; padding: 10px> No ha funcionado tu usuario y contrasena. Pruebalo manual y modificalo en ajustes</div>')
     }else if(window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1 ){
@@ -126,9 +142,7 @@ function showMessageError(){
                     var secret = extensionConfig.secret;
                     totpLogin(secret);
             });
-
         });
-
     }
 }
 
