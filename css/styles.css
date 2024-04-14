@@ -1,19 +1,87 @@
+:root {
+    /* color-scheme: light dark; */
+    /* default dark scheme */
+    color-scheme: dark;
+
+
+    /**--------------------------------------------
+    *               BTN modifier bootstrap
+    *---------------------------------------------**/
+
+    --btn-primary: light-dark(#9EC8B9, #116D6E) !important;
+    --btn-primary-border-color: light-dark(#9EC8B9, #116D6E) !important;
+    --btn-primary-hover-bg: light-dark(#83aa9c, #116D6E) !important;
+
+    --btn-secondary: light-dark(#968ab4, #5C5470) !important;
+    --btn-secondary-border-color: light-dark(#968ab4, #5C5470) !important;
+
+    /**--------------------------------------------
+    *               Checkbox modifier
+    *---------------------------------------------**/
+    --checkbox-bg: light-dark(#9EC8B9, #116D6E) !important;
+    --form-check-input-checked-color: light-dark(#9EC8B9, #116D6E) !important;
+
+    /**----------------------
+     *    Dark light btn
+     *------------------------**/
+    --bg-planet-bright: #F2C94C;
+    --bg-planet-shadow: #828894;
+    --bg-planet-lightshadow: #D7D7D820;
+    --dot-size: 0.25rem;
+
+
+
+}
+
 * {
     box-sizing: border-box;
-    position: relative;
     padding: 0;
     margin: 0;
-  }
+}
 
 body {
+    position: relative;
     font-family: 'Roboto', sans-serif;
-    padding: 20px;
-    max-width: 300px;
-    min-width: 300px;
+
+    /* Modo oscuro y claro */
+    color: light-dark(black, white) !important;
+    background-color: light-dark(#f2f2f2, #222831) !important;
+
+
+}
+
+
+
+#configurator-Web {
+    background-color: light-dark(white, #31363F) !important;
+    /* border: 1px solid #ccc; */
+    /* shadow */
+    box-shadow: 1px 6px 11px 11px rgba(0, 0, 0, 0.2);
+    height: 600px !important;
+    max-width: 600px !important;
+    width: 400px !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.fix-bottom {
+    position: fixed;
+    bottom: 0;
+    /* width: 100%; */
+    z-index: 1000;
 }
 
 h1 {
     text-align: center;
+}
+
+.container {
+    padding: 20px;
+    max-width: 300px !important;
+    min-width: 300px;
+    background-color: light-dark(white, #31363F) !important;
 }
 
 .center {
@@ -39,7 +107,8 @@ h1 {
     width: 50px;
     height: 26px;
 }
-.button-message{
+
+.button-message {
     margin: 0;
 }
 
@@ -149,7 +218,7 @@ input[type="checkbox"]:checked+.slider:before {
 
 .button * {
     pointer-events: none;
-    
+
 }
 
 .button:hover:not(.raised),
@@ -232,69 +301,113 @@ input[type="checkbox"]:checked+.slider:before {
 }
 
 
-.blue{
+.blue {
     background-color: #2196f3;
     color: white;
 }
 
 
+.qr-code {
+    background-color: #fff;
+    padding: 10px;
+}
 
 
+
+/* #region Bootstrap */
+/**----------------------
+ *    Change Bootstrap btn
+ *------------------------**/
+.btn-primary,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: var(--btn-primary) !important;
+    border-color: var(--btn-primary-border-color) !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--btn-primary-hover-bg) !important;
+}
+
+.btn-secondary,
+.btn-secondary:active,
+.btn-secondary:visited,
+.btn-secondary:focus {
+    background-color: var(--btn-secondary) !important;
+    border-color: var(--btn-secondary-border-color) !important;
+}
+
+
+
+
+/**----------------------
+ *    Checkbox
+ *------------------------**/
+input[type="checkbox"]:checked+.slider {
+    background-color: var(--checkbox-bg) !important;
+    border-color: var(--checkbox-bg) !important;
+}
 
 /**----------------------
  *    Stepper
  *------------------------**/
 
- .register-stepper {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  position: relative;
-  margin: 0 auto 1.5em;
+.register-stepper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    position: relative;
+    margin: 0 auto 1.5em;
 }
+
 .register-stepper::before {
-  z-index: 0;
-  content: "";
-  display: block;
-  position: absolute;
-  height: 2px;
-  top: calc(50% - 1px);
-  background: #cecece;
-  width: calc(100% - 20px);
+    z-index: 0;
+    content: "";
+    display: block;
+    position: absolute;
+    height: 2px;
+    top: calc(50% - 1px);
+    background: #cecece;
+    width: calc(100% - 20px);
 }
+
 .register-stepper .step {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
-  border: 2px solid #cecece;
-  color: #cecece;
-  background-color: #fff;
-  border-radius: 50%;
-  min-width: 25px;
-  min-height: 25px;
-  line-height: 20px;
-  font-size: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    border: 2px solid #cecece;
+    color: #cecece;
+    background-color: #fff;
+    border-radius: 50%;
+    min-width: 25px;
+    min-height: 25px;
+    line-height: 20px;
+    font-size: 16px;
 }
+
 .register-stepper .step-active {
-  color: #00c4b5;
-  background-color: #fff;
-  border-color: #00c4b5;
+    color: #00c4b5;
+    background-color: #fff;
+    border-color: #00c4b5;
 }
+
 .register-stepper .step-done {
-  color: #a7e4b5;
-  border-color: #a7e4b5;
+    color: #a7e4b5;
+    border-color: #a7e4b5;
 }
+
 .register-stepper .step-number {
-  font-family: "Montserrat", sans-serif;
-  font-weight: 800;
-  line-height: 1;
-  vertical-align: middle;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    line-height: 1;
+    vertical-align: middle;
 }
 
 
 
-footer{
+footer {
     position: relative;
     margin-top: 20px;
     left: 0;
@@ -307,6 +420,33 @@ footer{
     border-top: 1px solid #aaa;
 }
 
-footer p{
+footer p {
     margin-bottom: 0;
 }
+
+
+/**--------------------------------------------
+ *               Light Dark Mode Button
+ *---------------------------------------------**/
+/* .btn-light-dark {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-size: 22px;
+    font-family: "Segoe UI Emoji";
+    display: flex;
+    justify-content: center;
+    align-items: right;
+    position: absolute;
+    right: 5px;
+    top: 15px;
+}
+
+.btn-light-dark:after {
+    content: "☀";
+}
+
+.btn-light-dark:checked::after {
+    content: "🌑";
+}
+ */
