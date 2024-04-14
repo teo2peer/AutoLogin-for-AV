@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    $("#config2").click(function () {
+    $("#config2").click(async function () {
         // validar regex para que solo se permitan letras y números
         var username = $("#username").val();
         var password = $("#password").val();
@@ -23,35 +23,15 @@ $(document).ready(function () {
             return;
         }
         
+        await saveData(username, password);
+
+        if(!await checkDataSaved()){
+            await saveData(username, password);
+        }
+
         
 
-        // guardar en local storage
-        chrome.storage.local.get("configurations", function (data) {
-            var extensionConfig = data.configurations || [];
-        
-            if (!extensionConfig || extensionConfig.length == 0) {
-                extensionConfig = {
-                    extensionEnabled: false, 
-                    configured: false,
-                    page: "",
-                    username: "",
-                    password: "",
-                    secret: "",
-                };
-            }
-            console.log(extensionConfig);
-    
-            // Actualizamos el estado del toggle switch, el texto del botón y el mensaje de estado
-            extensionConfig.extensionEnabled = true;
-            extensionConfig.configured = true;
-            extensionConfig.username = username;
-            extensionConfig.password = password;
-            extensionConfig.page = 3;
-            extensionConfig.secret = "";
-        
-            // Guardamos el array de configuraciones actualizado en el almacenamiento local
-            chrome.storage.local.set({ "configurations": extensionConfig });
-        });
+        // coger los datos
 
         if (window.location.href.indexOf("web-version") > -1) {
             window.location.href = "/pages/setup/web-version/config3.html";
@@ -66,3 +46,49 @@ $(document).ready(function () {
         $("#error").text(message);
     }
 }); 
+
+
+async function saveData(username, password){
+    // guardar en local storage
+    await chrome.storage.local.get("configurations", function (data) {
+        var extensionConfig = data.configurations || [];
+    
+        if (!extensionConfig || extensionConfig.length == 0) {
+            extensionConfig = {
+                extensionEnabled: false, 
+                configured: false,
+                page: "",
+                username: "",
+                password: "",
+                secret: "",
+            };
+        }
+        console.log(extensionConfig);
+
+        // Actualizamos el estado del toggle switch, el texto del botón y el mensaje de estado
+        extensionConfig.extensionEnabled = true;
+        extensionConfig.configured = true;
+        extensionConfig.username = username;
+        extensionConfig.password = password;
+        extensionConfig.page = 3;
+        extensionConfig.secret = "";
+    
+        // Guardamos el array de configuraciones actualizado en el almacenamiento local
+        chrome.storage.local.set({ "configurations": extensionConfig });
+    });
+}
+
+async function checkDataSaved(){
+    var saved = false;
+    await chrome.storage.local.get("configurations", function (data) {
+        var extensionConfig = data.configurations || [];
+    
+        if (!extensionConfig || extensionConfig.length == 0) {
+            saved = false;
+        }else{
+            saved = true;
+        }
+    });
+
+    return saved;
+}
