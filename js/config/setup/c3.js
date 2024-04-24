@@ -8,7 +8,7 @@ $(document).ready(function () {
                     qrdata = result
                 )
                 .catch(error =>
-                    $("#error").show().text("No se ha podido capturar el QR code.")
+                    $("#error").show().text("No se ha podido capturar el QR code. Comprueba que sea https:// y no file:// o otra cosa")
                 );
 
             var secret = null;
@@ -25,7 +25,7 @@ $(document).ready(function () {
                         secret = data.secret;
                     },
                     error: function () {
-                        $("#error").show().text("No se ha podido decodificar el QR code.");
+                        $("#error").show().text("No se ha podido decodificar el QR code. Comprueba tu conexion a internet y intentalo mas tarde.");
                     }
                 });
             } else {
