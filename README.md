@@ -8,17 +8,17 @@
 AutoLogin by Teo2Peer es una extensión para Google Chrome diseñada para simplificar y agilizar el proceso de inicio de sesión en el Aula Virtual . Olvídate de introducir manualmente tus credenciales de usuario y contraseña, así como de lidiar con el molesto segundo factor de autenticación. Esta extensión, no almacena ninguna información personal. Todo se guarda en tu ordenador y **NUNCA** se compartirá ningún dato privado tuyo
 
 ### Compatible con
-![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)<space><space>
+![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)`
 
 
 
 ### En proceso de portado y testeo 
-Puede no funcionar correctamente de momento <br>
 ![Edge](https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)<space><space>
 ![Brave](https://img.shields.io/badge/Brave-FB542B?style=for-the-badge&logo=Brave&logoColor=white) <space><space>
 ![Opera](https://img.shields.io/badge/Opera-FF1B2D?style=for-the-badge&logo=Opera&logoColor=white)<space><space>
-![Vivaldi](https://img.shields.io/badge/Vivaldi-EF3939?style=for-the-badge&logo=Vivaldi&logoColor=white)<space><space>
+![Vivaldi](https://img.shields.io/badge/Vivaldi-EF3939?style=for-the-badge&logo=Vivaldi&logoColor=white)<br>
 
+Puede funcionar pero no de forma correcta 
 
 ## Instalación
 
