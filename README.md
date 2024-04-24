@@ -13,7 +13,7 @@ AutoLogin by Teo2Peer es una extensión para Google Chrome diseñada para simpli
 
 
 ### En proceso de portado y testeo 
-Puede no funcionar correctamente de momento
+Puede no funcionar correctamente de momento <br>
 ![Edge](https://img.shields.io/badge/Edge-0078D7?style=for-the-badge&logo=Microsoft-edge&logoColor=white)<space><space>
 ![Brave](https://img.shields.io/badge/Brave-FB542B?style=for-the-badge&logo=Brave&logoColor=white) <space><space>
 ![Opera](https://img.shields.io/badge/Opera-FF1B2D?style=for-the-badge&logo=Opera&logoColor=white)<space><space>
