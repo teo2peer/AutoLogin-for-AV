@@ -2,38 +2,33 @@
     "manifest_version": 3,
     "name": "AutoLogin by TeoDev",
     "description": "Inicio de sesión automático en el Aula Virtual.",
-    "version": "2.0",
+    "version": "2.8",
     "permissions": [
-        "tabs",
         "cookies",
         "contextMenus",
         "unlimitedStorage",
         "storage",
         "activeTab"
     ],
-    "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self';",
-        "sandbox": "sandbox allow-scripts allow-forms allow-popups allow-modals; script-src 'self' 'unsafe-inline' 'unsafe-eval'; child-src 'self';"
-    },
     "host_permissions": [
         "*://*.uji.es/*",
-        "https://teodin.dev/*"
+        "https://teodin.dev/*",
+        "https://worldtimeapi.org/api/*"
     ],
     "optional_host_permissions": [
         "*://*/*"
     ],
     "background": {
-        "service_worker": "/js/sw.js"
-        
+        "service_worker": "js/sw.js"
     },
     "content_scripts": [
         {
             "js": [
-                "/js/content.js",
-                "/js/jquery.js"
+                "js/content.js",
+                "js/jquery.js"
             ],
             "css": [
-                "/css/content.css"
+                "css/content.css"
             ],
             "all_frames": true,
             "matches": [
