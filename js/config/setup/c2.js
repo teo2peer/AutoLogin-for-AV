@@ -5,8 +5,8 @@ $(document).ready(function () {
         var username = $("#username").val();
         var password = $("#password").val();
 
-        if (username.length < 8 || username.length > 10) {
-            showErrorMessage("El nombre de usuario debe tener entre 8 y 10 caracteres");
+        if (username.length < 2 || username.length > 30) {
+            showErrorMessage("El nombre de usuario debe tener entre 2 y 30 caracteres");
             return;
         }
 
@@ -14,14 +14,7 @@ $(document).ready(function () {
             showErrorMessage("La contraseña debe tener al menos 6 caracteres");
             return;
         }
-
-        // rejex username alXXXXXX donde X es un número
-        var usernameRegex = /^al\d{6}$/;
-
-        if (!usernameRegex.test(username)) {
-            showErrorMessage("El nombre de usuario debe ser alXXXXXX donde X es un número");
-            return;
-        }
+        
 
         $(this).attr("disabled", true);
 
