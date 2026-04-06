@@ -2,8 +2,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var toggleSwitch = document.getElementById("toggleSwitch");
     var statusMessage = document.getElementById("statusMessage");
 
-    var totpRemoto = document.getElementById("totp-hora-remota");
-    var totpLocal = document.getElementById("totp-hora-local");
+    const totpNtp = document.getElementById("totp-hora-remota");
+    const totpLocal = document.getElementById("totp-hora-local");
+    const totpServer = document.getElementById("totp-hora-servidor");
 
     $("#config").click(function () {
         window.location.href = "/pages/config/config.html";
@@ -45,16 +46,21 @@ document.addEventListener("DOMContentLoaded", function () {
             buttonMessage.textContent = toggleSwitch.checked ? "Activado" : "Desactivado";
             statusMessage.textContent = statusMessageDisplay(extensionConfig.extensionEnabled, extensionConfig.configured);
 
-            totpRemoto.val = "Cargando...";
-            totpLocal.val = "Cargando...";
+            totpNtp.value = "Cargando...";
+            totpLocal.value = "Cargando...";
+            totpServer.value = "Cargando...";
             
-            generateTOTP(extensionConfig.secret, false).then((totp) => {
+            generateTOTP(extensionConfig.secret, "ntp").then((totp) => {
+                totpNtp.value = totp;
+                console.log("totpNtp: " + totp);
+            });
+            generateTOTP(extensionConfig.secret, "local").then((totp) => {
                 totpLocal.value = totp;
                 console.log("totpLocal: " + totp);
             });
-            generateTOTP(extensionConfig.secret, true).then((totp) => {
-                totpRemoto.value = totp;
-                console.log("totpRemoto: " + totp);
+            generateTOTP(extensionConfig.secret, "server").then((totp) => {
+                totpServer.value = totp;
+                console.log("totpServer: " + totp);
             });
 
 
@@ -76,49 +82,87 @@ function statusMessageDisplay(state, configured) {
  * @returns {number|null} - The time from the NTP server or null if an error occurs.
  */
 async function getNTPTime() {
-    const url = "https://teodin.dev/api/apps/time"; // Declarar correctamente la variable url
+    const url = "https://worldtimeapi.org/api/timezone/Etc/UTC";
     try {
         const response = await fetch(url);
         const data = await response.json();
         console.log(data);
-        return data.unixtime;
+        return data.unixtime || Math.floor(new Date(data.datetime).getTime() / 1000);
     } catch (error) {
         console.log(error);
         return null;
     }
 }
 
+/**
+ * Get the time from the server fallback.
+ * @returns {number|null} - The time from the server or null if an error occurs.
+ */
+async function getServerTime() {
+    const url = "https://api.teodin.dev/api/apps/time";
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.unixtime || null;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+function getTimeGetter(mode) {
+    if (mode === "ntp") {
+        return getNTPTime;
+    }
+
+    if (mode === "server") {
+        return getServerTime;
+    }
+
+    return async () => Math.floor(Date.now() / 1000);
+}
+
+function shouldSkipLocalSource(mode, sourceName) {
+    if (mode !== "preferred" || sourceName !== "local") {
+        return false;
+    }
+
+    const expireCode = 30 - (new Date().getSeconds() % 30);
+    return expireCode <= 1;
+}
+
 
 /**
- * Generates a TOTP code based on the provided secret.
+ * Generates a TOTP code based on the provided secret with ordered time-source fallback.
  * @param {string} secret - The secret used to generate the TOTP code.
+ * @param {string} mode - The time source to use: preferred, ntp, local, or server.
  * @returns {Promise<string>} - The generated TOTP code.
  */
-async function generateTOTP(secret, remote=false) {
+async function generateTOTP(secret, mode = "preferred") {
     const totp = new jsOTP.totp();
-    // Get time
-    if (!remote) {
-        return totp.getOtp(secret);
-    }
-    let timeUnix = getNTPTime().then(function (timeUnix) {
-    // convert to ms
-        
-        timeUnix = timeUnix * 1000;
-        // console.log("timeUnix: " + timeUnix);
-        let timeCode;
-        timeCode = totp.getOtp(secret, timeUnix);
-        return timeCode;
-    }).catch ((error) => {
-        timeCode = totp.getOtp(secret);
-        let expireCode = 30 - (new Date().getSeconds() % 30);
-        if (expireCode <= 1) {
-            timeCode = totp.getOtp(secret);
-        }
-        return timeCode;
-    });
+    const sourceNames = mode === "preferred" ? ["ntp", "local", "server"] : [mode];
 
-    // console.log("timeCode: " + timeCode);
-    return timeUnix;
+    for (const sourceName of sourceNames) {
+        try {
+            const getTime = getTimeGetter(sourceName);
+            const timeUnix = await getTime();
+            if (!timeUnix) {
+                continue;
+            }
+
+            const code = totp.getOtp(secret, timeUnix * 1000);
+
+            if (shouldSkipLocalSource(mode, sourceName)) {
+                continue;
+            }
+
+            return code;
+        } catch (error) {
+            console.log(`TOTP generation failed for ${sourceName} time:`, error);
+        }
+    }
+
+    throw new Error("No time source available to generate TOTP");
 }
 
 

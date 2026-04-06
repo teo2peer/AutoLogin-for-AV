@@ -92,16 +92,53 @@ function generateLoginButton(){
 
 /**
  * Logs in the user by filling in the username and password fields and clicking the login button.
+ * Includes retry mechanism with 3 attempts and 2 second intervals.
  * @param {string} user - The username.
  * @param {string} pass - The password.
+ * @param {number} retryCount - Current retry count (default 0).
+ * @param {number} maxRetries - Maximum number of retries (default 3).
  */
-function loginMain(user, pass) {
-    var username = document.getElementById("user");
-    username.value = user;
-    var password = document.getElementById("pass");
-    password.value = pass;
-    var button = document.getElementById("acc_user_img");
-    button.click();
+async function loginMain(user, pass, retryCount = 0, maxRetries = 3) {
+    try {
+        const username = document.getElementById("user");
+        const password = document.getElementById("pass");
+        const button = document.getElementById("acc_user_img");
+        
+        if (!username || !password || !button) {
+            throw new Error("Login form elements not found");
+        }
+        
+        username.value = user;
+        password.value = pass;
+        button.click();
+        
+        showToast("Credenciales enviadas automáticamente", 'success', 3000);
+        console.log(`Login attempt ${retryCount + 1} submitted`);
+        
+    } catch (error) {
+        console.error("Login Main error:", error);
+        
+        // Increment retry count
+        retryCount++;
+        
+        if (retryCount < maxRetries) {
+            // Show retry attempt message
+            showToast(`Reintentando login... Intento ${retryCount} de ${maxRetries}`, 'warning', 3000);
+            
+            // Wait 2 seconds before retrying
+            await delay(2000);
+            
+            // Retry
+            return loginMain(user, pass, retryCount, maxRetries);
+        } else {
+            // Max retries reached
+            console.error(`Failed to login after ${maxRetries} attempts`);
+            showToast(`❌ Error: No se pudo completar el login tras ${maxRetries} intentos`, 'error', 0);
+            
+            // Show manual input banner
+            showManualInputBanner();
+        }
+    }
 }
 
 /**
@@ -118,12 +155,11 @@ function startAutoLogin() {
  * @returns {number|null} - The time from the NTP server or null if an error occurs.
  */
 async function getNTPTime() {
-    const url = "https://teodin.dev/api/apps/time"; // Declarar correctamente la variable url
+    const url = "https://worldtimeapi.org/api/timezone/Etc/UTC";
     try {
         const response = await fetch(url);
         const data = await response.json();
-        // console.log(data.unixtime);
-        return data.unixtime;
+        return data.unixtime || Math.floor(new Date(data.datetime).getTime() / 1000);
     } catch (error) {
         console.log(error);
         return null;
@@ -131,66 +167,209 @@ async function getNTPTime() {
 }
 
 /**
- * Generates a TOTP code based on the provided secret.
+ * Get the time from the server fallback.
+ * @returns {number|null} - The time from the server or null if an error occurs.
+ */
+async function getServerTime() {
+    const url = "https://api.teodin.dev/api/apps/time";
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data.unixtime || null;
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
+/**
+ * Generates a TOTP code based on the provided secret with NTP sync and local fallback.
  * @param {string} secret - The secret used to generate the TOTP code.
- * @returns {Promise<string>} - The generated TOTP code.
+ * @returns {Promise<{code: string, timeSync: boolean}>} - The generated TOTP code and time sync status.
  */
 async function generateTOTP(secret) {
     const totp = new jsOTP.totp();
-    // Get time
-    let timeUnix = getNTPTime().then(function (timeUnix) {
-    // convert to ms
-        timeUnix = timeUnix * 1000;
-        // console.log("timeUnix: " + timeUnix);
-        let timeCode;
-        timeCode = totp.getOtp(secret, timeUnix);
-        return timeCode;
-    }).catch ((error) => {
-        console.log(error);
-        timeCode = totp.getOtp(secret);
-        let expireCode = 30 - (new Date().getSeconds() % 30);
-        if (expireCode <= 1) {
-            timeCode = totp.getOtp(secret);
-        }
-        return timeCode;
-    });
+    const sources = [
+        { name: "ntp", getTime: getNTPTime },
+        { name: "local", getTime: async () => Math.floor(Date.now() / 1000) },
+        { name: "server", getTime: getServerTime },
+    ];
 
-    // console.log("timeCode: " + timeCode);
-    return timeUnix;
+    for (const source of sources) {
+        try {
+            const timeUnix = await source.getTime();
+            if (!timeUnix) {
+                continue;
+            }
+
+            const code = totp.getOtp(secret, timeUnix * 1000);
+            const expireCode = 30 - (new Date().getSeconds() % 30);
+
+            if (source.name === "local" && expireCode <= 1) {
+                continue;
+            }
+
+            return {
+                code,
+                timeSync: source.name === "ntp",
+                source: source.name,
+            };
+        } catch (error) {
+            console.log(`TOTP generation failed for ${source.name} time:`, error);
+        }
+    }
+
+    throw new Error("No time source available to generate TOTP");
 }
 
+
+/**
+ * Shows a toast notification at the top right of the page.
+ * @param {string} message - The message to display.
+ * @param {string} type - The type of notification: 'success', 'error', 'warning', 'info'.
+ * @param {number} duration - Duration in milliseconds (default 5000).
+ */
+function showToast(message, type = 'info', duration = 5000) {
+    const toastContainer = document.getElementById('auto-login-toast-container') || createToastContainer();
+    
+    const toast = document.createElement('div');
+    toast.className = `auto-login-toast auto-login-toast-${type}`;
+    toast.innerHTML = `
+        <div class="auto-login-toast-content">
+            <span class="auto-login-toast-message">${escapeHtml(message)}</span>
+            <button class="auto-login-toast-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+        </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    if (duration > 0) {
+        setTimeout(() => {
+            toast.remove();
+        }, duration);
+    }
+    
+    console.log(`Toast [${type}]: ${message}`);
+}
+
+/**
+ * Creates the toast container element.
+ * @returns {HTMLElement} The toast container.
+ */
+function createToastContainer() {
+    const container = document.createElement('div');
+    container.id = 'auto-login-toast-container';
+    container.className = 'auto-login-toast-container';
+    document.body.appendChild(container);
+    return container;
+}
+
+/**
+ * Escapes HTML special characters to prevent XSS.
+ * @param {string} text - The text to escape.
+ * @returns {string} The escaped text.
+ */
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+/**
+ * Shows a manual input banner asking the user to enter the authentication code.
+ */
+function showManualInputBanner() {
+    // Remove existing banner if any
+    const existingBanner = document.getElementById('auto-login-manual-banner');
+    if (existingBanner) {
+        existingBanner.remove();
+    }
+    
+    const banner = document.createElement('div');
+    banner.id = 'auto-login-manual-banner';
+    banner.className = 'auto-login-manual-banner';
+    banner.innerHTML = `
+        <div class="auto-login-banner-content">
+            <div class="auto-login-banner-message">
+                <strong>AutoLogin - Asistencia Manual Requerida</strong>
+                <p>No ha sido posible generar el código de autenticación automáticamente. Por favor, ingresa el código manualmente o intenta más tarde.</p>
+            </div>
+            <button class="auto-login-banner-close" onclick="document.getElementById('auto-login-manual-banner').remove()">Cerrar</button>
+        </div>
+    `;
+    
+    document.body.insertBefore(banner, document.body.firstChild);
+    console.log("Manual input banner shown");
+}
 
 /**
  * Logs in the user by filling in the TOTP code field and clicking the login button.
+ * Includes retry mechanism with 3 attempts and 2 second intervals.
  * @param {string} secret - The secret used to generate the TOTP code.
+ * @param {number} retryCount - Current retry count (default 0).
+ * @param {number} maxRetries - Maximum number of retries (default 3).
  */
-async function totpLogin(secret) {
-    var number = await generateTOTP(secret);    
-    var input = document.getElementsByName("code")[0];
-    input.value = number;
-    var button = document.getElementsByClassName("disabled button expanded")[0];
-    button.removeAttribute("disabled");
-    button.click();
-}
-
-/**
- * Shows an error message based on the current URL.
- */
-function showMessageError(){
-    if (window.location.href.indexOf("https://aulavirtual.uji.es/login/index.php") != -1) {        
-        generateLoginButton();
-    }else if(window.location.href.indexOf("https://xmlrpc.uji.es/lsmSSO-83/lsmanage.php") != -1){
-        $("#loginform").appendChild('<div id="error" style="background: #902424; padding: 10px> No ha funcionado tu usuario y contrasena. Pruebalo manual y modificalo en ajustes</div>')
-    }else if(window.location.href.indexOf("https://xmlrpc.uji.es/simplesaml/module.php/twofactorauth/TwoFactorMethods/totp.php") != -1 ){
-        $(".user_msg").appendChild('<div id="error" style="background: #902424; padding: 10px> El codigo F2A no ha funcionado. Pureba otra vez haciendo click aqui.</div>')
-        $(".hide-for-print").appendChild('<div id="error" style="background: #902424; padding: 10px> El codigo F2A no ha funcionado. Pureba otra vez haciendo click aqui.</div>')
-        $("#error").click(function(){
-            chrome.storage.local.get("configurations", async function (data) {
-                var extensionConfig = data.configurations || [];
-                    var secret = extensionConfig.secret;
-                    totpLogin(secret);
-            });
-        });
+async function totpLogin(secret, retryCount = 0, maxRetries = 3) {
+    try {
+        const input = document.getElementsByName("code")[0];
+        if (!input) {
+            console.error("TOTP input field not found");
+            showToast("No se encontró el campo de código TOTP", 'error');
+            return;
+        }
+        
+        // Generate TOTP code with time sync
+        const result = await generateTOTP(secret);
+        const code = result?.code;
+        if (!code) {
+            throw new Error("Failed to generate TOTP code");
+        }
+        
+        const { timeSync } = result;
+        
+        // Warn if time sync failed
+        if (!timeSync) {
+            showToast("⚠️ Usando reloj local (posible desajuste de tiempo)", 'warning', 4000);
+        }
+        
+        input.value = code;
+        
+        const button = document.getElementsByClassName("disabled button expanded")[0];
+        if (!button) {
+            console.error("Submit button not found");
+            showToast("Botón de envío no encontrado", 'error');
+            return;
+        }
+        
+        button.removeAttribute("disabled");
+        button.click();
+        
+        showToast("Código TOTP enviado automáticamente", 'success', 3000);
+        console.log(`TOTP code submitted on attempt ${retryCount + 1}`);
+        
+    } catch (error) {
+        console.error("TOTP login error:", error);
+        
+        // Increment retry count
+        retryCount++;
+        
+        if (retryCount < maxRetries) {
+            // Show retry attempt message
+            showToast(`Reintentando... Intento ${retryCount} de ${maxRetries}`, 'warning', 3000);
+            
+            // Wait 2 seconds before retrying
+            await delay(2000);
+            
+            // Retry
+            return totpLogin(secret, retryCount, maxRetries);
+        } else {
+            // Max retries reached
+            console.error(`Failed to generate TOTP after ${maxRetries} attempts`);
+            showToast(`❌ Error: No se pudo generar el código tras ${maxRetries} intentos`, 'error', 0);
+            
+            // Show manual input banner
+            showManualInputBanner();
+        }
     }
 }
 

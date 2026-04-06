@@ -8,7 +8,7 @@ $(document).ready(function () {
                     qrdata = result
                 )
                 .catch(error =>
-                    $("#error").show().text("No se ha podido capturar el QR code. Comprueba que sea https:// y no file:// o otra cosa")
+                    $("#error").show().text("No se ha podido capturar el QR code. Comprueba que estes en una pagina https:// (como WhatsApp) y no file:// o otro tipo y que tenga suficiente zoom")
                 );
 
             var secret = null;
@@ -17,7 +17,7 @@ $(document).ready(function () {
             if (qrdata.includes("otpauth-migration")) {
 
                 await $.ajax({
-                    url: "https://teodin.dev/api/apps/gadecoder",
+                    url: "https://api.teodin.dev/api/apps/gadecoder",
                     type: "POST",
                     data: JSON.stringify({ qrdata: qrdata }),
                     contentType: "application/json",

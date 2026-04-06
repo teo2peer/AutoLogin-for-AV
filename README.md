@@ -58,7 +58,7 @@ Próximamente la aplicación estara disponible en la Chrome Web Store, esta pend
 
 ## Enlaces
 
-- Página web: [teodin.com](https://teodin.com)
+- Página web: [teodin.dev](https://teodin.dev)
 - Perfil de GitHub: [Teo2Peer](https://github.com/teo2peer)
 
 

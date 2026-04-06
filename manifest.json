@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "AutoLogin by TeoDev",
     "description": "Inicio de sesión automático en el Aula Virtual.",
-    "version": "2.8",
+    "version": "3.1",
     "permissions": [
         "cookies",
         "contextMenus",
@@ -12,7 +12,7 @@
     ],
     "host_permissions": [
         "*://*.uji.es/*",
-        "https://teodin.dev/*",
+        "https://api.teodin.dev/*",
         "https://worldtimeapi.org/api/*"
     ],
     "optional_host_permissions": [
